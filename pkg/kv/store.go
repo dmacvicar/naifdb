@@ -125,7 +125,14 @@ func (s *Store) Get(key []byte) ([]byte, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	s.fileDesc.Seek(0, 0)
+	// check if key in index
+	if offset, ok := s.index[string(key)]; ok {
+		s.fileDesc.Seek(offset, 0)
+	} else {
+		s.fileDesc.Seek(0, 0)
+
+	}
+
 	decoder := msgpack.NewDecoder(s.fileDesc)
 	its := 0
 	defer func() {
@@ -133,6 +140,7 @@ func (s *Store) Get(key []byte) ([]byte, error) {
 		log.Printf("Scanned %d records", its)
 	}()
 	for {
+		its = its + 1
 		record := Record{}
 		err := decoder.Decode(&record)
 		if err == io.EOF {
@@ -144,7 +152,6 @@ func (s *Store) Get(key []byte) ([]byte, error) {
 		if bytes.Compare(record.Key, key) == 0 {
 			return record.Value, nil
 		}
-		its = its + 1
 	}
 	// TODO should be error NotFound?
 	return nil, nil
