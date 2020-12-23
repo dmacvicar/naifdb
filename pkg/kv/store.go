@@ -53,6 +53,11 @@ func NewStore(opts ...StoreOption) (*Store, error) {
 		opt(store)
 	}
 
+	// make sure the data dir exists
+	if err := os.MkdirAll(store.dir, 0755); err != nil {
+		return nil, err
+	}
+
 	store.fileDesc, err = os.OpenFile(path.Join(store.dir, DbFilename), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err

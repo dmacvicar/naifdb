@@ -14,10 +14,13 @@ func TestStore(t *testing.T) {
 		{"Key3", "Value 3"},
 	}
 
-	store, err := NewStore(WithDirectory(t.TempDir()))
-	defer store.Close()
+	datadir := t.TempDir()
 
-	assert.FileExists(t, path.Join(t.TempDir(), "log.db"))
+	store, err := NewStore(WithDirectory(datadir))
+	defer func() {
+		store.Close()
+		assert.FileExists(t, path.Join(datadir, "log.db"))
+	}()
 
 	for _, pair := range pairs {
 		err = store.Set([]byte(pair[0]), []byte(pair[1]))
