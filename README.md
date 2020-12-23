@@ -9,6 +9,10 @@ This is an educational project, and has no other purpose. It will evolve it to u
 
 The starting design is the one used by [Bitcask](https://en.wikipedia.org/wiki/Bitcask (default storage engine in Riak) ([paper](https://riak.com/assets/bitcask-intro.pdf)). Check the original design for trade-offs.
 
+# Requirements
+
+- go 1.15 or later is required
+
 # Usage
 
 

@@ -8,11 +8,20 @@ import (
 	"log"
 	"os"
 	"sync"
+	"path"
 )
 
 const (
 	DbFilename string = "log.db"
 )
+
+type StoreOption func(*Store)
+
+func WithDirectory(dir string) StoreOption {
+	return func(s *Store) {
+		s.dir = dir
+	}
+}
 
 type Record struct {
 	Key   []byte
@@ -20,6 +29,7 @@ type Record struct {
 }
 
 type Store struct {
+	dir string
 	mutex sync.Mutex
 	// key to offet index
 	// TODO []byte can't be used. Convert to string for now
@@ -29,24 +39,36 @@ type Store struct {
 	offset int64
 }
 
-func NewStore() (*Store, error) {
-	fileDesc, err := os.OpenFile(DbFilename, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+func NewStore(opts ...StoreOption) (*Store, error) {
+	store := &Store{}
+
+	var err error
+	store.dir, err = os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	// apply all passed options
+	for _, opt := range opts {
+		opt(store)
+	}
+
+	store.fileDesc, err = os.OpenFile(path.Join(store.dir, DbFilename), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err
 	}
 
 	// calculate current offset
-	stat, err := fileDesc.Stat()
+	stat, err := store.fileDesc.Stat()
 	if err != nil {
 		return nil, err
 	}
-	offset := stat.Size()
-	log.Println("Current offset:", offset)
+	store.offset = stat.Size()
+	log.Println("Current offset:", store.offset)
 
-	index := make(map[string]int64)
+	store.index = make(map[string]int64)
 	// TODO read the whole index into memory
-	//
-	return &Store{fileDesc: fileDesc, offset: offset, index: index}, nil
+    return store, nil
 }
 
 func (s *Store) Close() {
