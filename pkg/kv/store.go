@@ -37,6 +37,8 @@ type Store struct {
 	fileDesc *os.File
 	// current file offset
 	offset int64
+	// how many iterations matching the last key
+	Iterations int
 }
 
 func NewStore(opts ...StoreOption) (*Store, error) {
@@ -127,6 +129,7 @@ func (s *Store) Get(key []byte) ([]byte, error) {
 	decoder := msgpack.NewDecoder(s.fileDesc)
 	its := 0
 	defer func() {
+		s.Iterations = its
 		log.Printf("Scanned %d records", its)
 	}()
 	for {

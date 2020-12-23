@@ -32,4 +32,7 @@ func TestStore(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, pair[1], string(value))
 	}
+
+	assert.Equal(t, 1, store.Iterations, "Finding the last key should take a single iteration")
+
 }
