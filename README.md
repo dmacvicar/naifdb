@@ -9,6 +9,12 @@ This is an educational project, and has no other purpose. It will evolve it to u
 
 The starting design is the one used by [Bitcask](https://en.wikipedia.org/wiki/Bitcask) (default storage engine in Riak) ([paper](https://riak.com/assets/bitcask-intro.pdf)). Check the original design for trade-offs.
 
+# Caveats & Not yet implemented
+
+- [ ] CRC is not used
+- [ ] Locking of the directory
+- [ ] It creates a new append file in each startup, no matter if the previous closed RO file is small. Hopefully compaction will take care of that
+
 # Requirements
 
 - go 1.15 or later is required
