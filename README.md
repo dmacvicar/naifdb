@@ -7,7 +7,7 @@ This is an educational project, and has no other purpose. It will evolve it to u
 
 # Design
 
-The starting design is the one used by [Bitcask](https://en.wikipedia.org/wiki/Bitcask (default storage engine in Riak) ([paper](https://riak.com/assets/bitcask-intro.pdf)). Check the original design for trade-offs.
+The starting design is the one used by [Bitcask](https://en.wikipedia.org/wiki/Bitcask) (default storage engine in Riak) ([paper](https://riak.com/assets/bitcask-intro.pdf)). Check the original design for trade-offs.
 
 # Requirements
 
